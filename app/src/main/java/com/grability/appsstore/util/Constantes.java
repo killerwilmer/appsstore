@@ -5,5 +5,8 @@ package com.grability.appsstore.util;
  */
 public class Constantes {
 
-    public static String BASE_URL = "https://itunes.apple.com/us/rss/topfreeapplications/limit=2/json"; //BASE URL
+    public static String BASE_URL = "https://itunes.apple.com/us/rss/topfreeapplications/";
+    public static final long SPLASH_DELAY = 500;
+    public static final String LIMIT = "20";
+    public static final String FORMAT = "json";
 }
