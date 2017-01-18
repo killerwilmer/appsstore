@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,9 +53,22 @@ public class DetailAppActivity extends AppCompatActivity {
         txtSummary = (TextView) findViewById(R.id.txt_summary);
         imgApp = (ImageView) findViewById(R.id.img_app);
 
+
+        RotateAnimation anim = new RotateAnimation(0f, 350f, 15f, 15f);
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(Animation.INFINITE);
+        anim.setDuration(2000);
+
+        // Start animating the image
+        imgApp.startAnimation(anim);
+
+
         txtNameApp.setText(app.getIm_name());
         Picasso.with(getApplicationContext()).load(app.getImages().get(2).getLabel()).into(imgApp);
         txtSummary.setText(app.getSumary());
+
+        // Later.. stop the animation
+        imgApp.setAnimation(null);
     }
 
 }

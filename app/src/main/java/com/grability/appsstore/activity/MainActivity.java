@@ -21,8 +21,8 @@ import com.grability.appsstore.realm.RealmController;
 import com.grability.appsstore.realm.adapters.CategoriesAdapter;
 import com.grability.appsstore.realm.adapters.RealmCategoriesAdaper;
 import com.grability.appsstore.realm.model.Category;
-import com.grability.appsstore.util.Constantes;
 import com.grability.appsstore.util.ActivityUtils;
+import com.grability.appsstore.util.Constantes;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import io.realm.Realm;
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
         } else {
-            ActivityUtils.showDialog(this, "Información", "No hay conexión");
+            ActivityUtils.showDialog(this, "Información", "Conexión offline");
             RealmResults<Category> categories = RealmController.with(getApplication()).getCategoriesList();
             setRealmAdapter(categories);
         }
