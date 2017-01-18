@@ -17,4 +17,11 @@ public class Link {
         this.additionalProperties.put(name, value);
     }
 
+    public Attributes getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Attributes attributes) {
+        this.attributes = attributes;
+    }
 }

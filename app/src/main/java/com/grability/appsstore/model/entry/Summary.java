@@ -17,4 +17,11 @@ public class Summary {
         this.additionalProperties.put(name, value);
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
 }

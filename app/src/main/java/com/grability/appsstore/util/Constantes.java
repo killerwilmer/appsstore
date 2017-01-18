@@ -9,4 +9,6 @@ public class Constantes {
     public static final long SPLASH_DELAY = 500;
     public static final String LIMIT = "20";
     public static final String FORMAT = "json";
+    public static final String REALM_NAME_DB = "apss.realm";
+    public static final String CATEGORY_NAME = "term";
 }

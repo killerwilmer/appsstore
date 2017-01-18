@@ -27,4 +27,19 @@ public class Attributes {
         this.additionalProperties.put(name, value);
     }
 
+    public String getIm_id() {
+        return im_id;
+    }
+
+    public void setIm_id(String im_id) {
+        this.im_id = im_id;
+    }
+
+    public String getIm_bundleId() {
+        return im_bundleId;
+    }
+
+    public void setIm_bundleId(String im_bundleId) {
+        this.im_bundleId = im_bundleId;
+    }
 }

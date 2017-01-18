@@ -4,32 +4,39 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
+import com.facebook.stetho.Stetho;
 import com.grability.appsstore.R;
 import com.grability.appsstore.api.ApiApps;
 import com.grability.appsstore.api.service.ServiceFactory;
-import com.grability.appsstore.model.Apps;
 import com.grability.appsstore.model.entry.Entry;
+import com.grability.appsstore.realm.RealmController;
+import com.grability.appsstore.realm.adapters.CategoriesAdapter;
+import com.grability.appsstore.realm.adapters.RealmCategoriesAdaper;
+import com.grability.appsstore.realm.model.Category;
 import com.grability.appsstore.util.Constantes;
+import com.grability.appsstore.util.ActivityUtils;
+import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Realm realm;
+    private CategoriesAdapter adapter;
+    private RecyclerView recycler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +44,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        recycler = (RecyclerView) findViewById(R.id.recyclerCategories);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
+                .name(Constantes.REALM_NAME_DB)
+                .schemaVersion(0)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+
+        this.realm = RealmController.with(this).getRealm();
+
+        Stetho.initialize(
+                Stetho.newInitializerBuilder(this)
+                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                        .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
+                        .build());
 
         if(isTablet(getApplicationContext())){
             setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -53,24 +67,18 @@ public class MainActivity extends AppCompatActivity {
             setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
-        loadApps2();
+        loadApps();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -78,35 +86,13 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadApps() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constantes.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+    public void loadApps() {
 
-        ApiApps apiApps = retrofit.create(ApiApps.class);
+        boolean hasInternet = ActivityUtils.hasInternet(this);
+        setupRecycler();
 
-        Call<Apps> call = apiApps.getApps(Constantes.LIMIT, Constantes.FORMAT);
-
-        call.enqueue(new Callback<Apps>() {
-
-
-            @Override
-            public void onResponse(Call<Apps> call, Response<Apps> response) {
-                Log.d("Apps", response.body().toString());
-            }
-
-            @Override
-            public void onFailure(Call<Apps> call, Throwable t) {
-                Log.e("error1",t.getMessage());
-            }
-        });
-
-    }
-
-    public void loadApps2() {
-
-        ApiApps service = ServiceFactory.createRetrofitService(ApiApps.class, Constantes.BASE_URL);
+        if(hasInternet) {
+            ApiApps service = ServiceFactory.createRetrofitService(ApiApps.class, Constantes.BASE_URL);
             service.getRssApps(Constantes.LIMIT, Constantes.FORMAT)
                     .concatMap(apps -> rx.Observable.from(apps.getFeed().getEntry()))
                     .subscribeOn(Schedulers.newThread())
@@ -114,20 +100,43 @@ public class MainActivity extends AppCompatActivity {
                     .subscribe(new Subscriber<Entry>() {
                         @Override
                         public final void onCompleted() {
-                            //Mostrar las categorias desde Realm
+                            RealmResults<Category> categories = RealmController.with(getApplication()).getCategoriesList();
+                            setRealmAdapter(categories);
                         }
 
                         @Override
                         public final void onError(Throwable e) {
-                            Log.e("GithubDemo", e.getMessage());
+                            Log.e("MainError", e.getMessage());
                         }
 
                         @Override
                         public final void onNext(Entry entry) {
-                            Log.d("Main", entry.toString());
-                            //Guardar la nueva instancia en Realm
+                            RealmController.with(getApplication()).saveEntry(entry);
                         }
                     });
+        } else {
+            ActivityUtils.showDialog(this, "Información", "No hay conexión");
+            RealmResults<Category> categories = RealmController.with(getApplication()).getCategoriesList();
+            setRealmAdapter(categories);
+        }
+    }
+
+    public void setRealmAdapter(RealmResults<Category> categories) {
+
+        RealmCategoriesAdaper realmAdapter = new RealmCategoriesAdaper(this.getApplicationContext(), categories, true);
+        adapter.setRealmAdapter(realmAdapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void setupRecycler() {
+        recycler.setHasFixedSize(true);
+
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recycler.setLayoutManager(layoutManager);
+
+        adapter = new CategoriesAdapter(this);
+        recycler.setAdapter(adapter);
     }
 
     public static boolean isTablet(Context context) {
@@ -136,5 +145,5 @@ public class MainActivity extends AppCompatActivity {
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
 
-    }// isTablet
+    }
 }

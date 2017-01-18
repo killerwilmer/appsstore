@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:card="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    card:id="@+id/card_apps"
+    style="@style/AppTheme.Card.Margins"
+    card:layout_width="match_parent"
+    card:layout_height="wrap_content"
+    app:cardElevation="5dp"
+    card:elevation="5dp"
+    app:cardCornerRadius="5dp">
+
+    <LinearLayout
+        card:layout_width="match_parent"
+        card:layout_height="wrap_content"
+        card:orientation="horizontal"
+        card:padding="16dp">
+
+        <LinearLayout
+            card:layout_width="match_parent"
+            card:layout_height="wrap_content"
+            card:layout_gravity="center_vertical"
+            card:layout_weight="5"
+            card:orientation="vertical"
+            card:elevation="5dp">
+
+            <com.github.siyamed.shapeimageview.RoundedImageView
+                card:id="@+id/app_image"
+                card:layout_width="70dp"
+                card:layout_height="70dp"
+                card:src="@drawable/splash"
+                app:siRadius="6dp"
+                app:siBorderWidth="4dp"
+                app:siBorderColor="@color/darkgray"
+                app:siSquare="true"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            card:layout_width="match_parent"
+            card:layout_height="wrap_content"
+            card:layout_gravity="center_vertical"
+            card:layout_weight="2"
+            card:orientation="vertical"
+            card:paddingLeft="10pt">
+
+            <TextView
+                card:id="@+id/app_name"
+                card:layout_width="match_parent"
+                card:layout_height="wrap_content"
+                card:layout_marginBottom="@dimen/margin_small"
+                card:paddingBottom="@dimen/margin_normal"
+                card:paddingLeft="@dimen/margin_large"
+                card:paddingRight="@dimen/margin_large"
+                card:paddingTop="@dimen/margin_large"
+                card:textSize="@dimen/text_size_large"
+                card:textColor="#555555"
+                card:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

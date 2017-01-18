@@ -12,6 +12,7 @@ import com.grability.appsstore.model.entry.imprice.ImPrice;
 import com.grability.appsstore.model.entry.imreleasedate.ImReleaseDate;
 import com.grability.appsstore.model.entry.link.Link;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,36 +21,36 @@ public class Entry {
 
     @SerializedName("im:name")
     @Expose
-    public ImName im_name;
+    private ImName im_name;
 
     @SerializedName("im:image")
     @Expose
-    public List<ImImage> im_image = null;
+    private List<ImImage> im_image = new ArrayList();
 
     public Summary summary;
 
     @SerializedName("im:price")
     @Expose
-    public ImPrice im_price;
+    private ImPrice im_price;
 
     @SerializedName("im:contentType")
     @Expose
-    public ImContentType im_contentType;
+    private ImContentType im_contentType;
 
-    public Rights rights;
-    public Title title;
-    public Link link;
-    public Id id;
+    private Rights rights;
+    private Title title;
+    private Link link;
+    private Id id;
 
     @SerializedName("im:artist")
     @Expose
-    public ImArtist im_artist;
+    private ImArtist im_artist;
 
-    public Category category;
+    private Category category;
 
     @SerializedName("im:releaseDate")
     @Expose
-    public ImReleaseDate im_releaseDate;
+    private ImReleaseDate im_releaseDate;
 
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 

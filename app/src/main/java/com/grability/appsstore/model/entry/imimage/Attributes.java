@@ -17,4 +17,11 @@ public class Attributes {
         this.additionalProperties.put(name, value);
     }
 
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
 }

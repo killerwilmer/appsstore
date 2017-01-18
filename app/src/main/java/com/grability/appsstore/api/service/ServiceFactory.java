@@ -8,7 +8,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by killerwilmer on 12/01/17.
  */
 
-
 public class ServiceFactory {
     public static <T> T createRetrofitService(final Class<T> clazz, final String endPoint) {
         Retrofit retrofit = new Retrofit.Builder()

@@ -26,4 +26,35 @@ public class Attributes {
         this.additionalProperties.put(name, value);
     }
 
+    public String getIm_id() {
+        return im_id;
+    }
+
+    public void setIm_id(String im_id) {
+        this.im_id = im_id;
+    }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
 }
